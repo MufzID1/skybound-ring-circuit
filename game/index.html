@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SKYBOUND — Ring Circuit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="game-canvas"></canvas>
+
+<!-- Primary flight instruments: airspeed, altitude, vertical speed -->
+<div id="instruments-left" class="hud-panel">
+  <div>
+    <div class="hud-label">Airspeed</div>
+    <div class="hud-value"><span id="hud-speed">0</span><span class="hud-unit">kt</span></div>
+  </div>
+  <div>
+    <div class="hud-label">Altitude</div>
+    <div class="hud-value"><span id="hud-altitude">0</span><span class="hud-unit">ft</span></div>
+  </div>
+  <div>
+    <div class="hud-label">Vert Speed</div>
+    <div class="hud-value"><span id="hud-vspeed">0</span><span class="hud-unit">fpm</span></div>
+  </div>
+</div>
+
+<!-- Mission instruments: score, clock, rings cleared -->
+<div id="instruments-right" class="hud-panel">
+  <div>
+    <div class="hud-label">Score</div>
+    <div class="hud-value"><span id="hud-score">0</span></div>
+  </div>
+  <div>
+    <div class="hud-label">Time</div>
+    <div class="hud-value"><span id="hud-time">0:00</span></div>
+  </div>
+  <div>
+    <div class="hud-label">Rings</div>
+    <div class="hud-value"><span id="hud-rings">0/8</span></div>
+  </div>
+</div>
+
+<!-- Compass tape with the live heading readout -->
+<div id="compass-strip">
+  <div id="compass-tape">N&nbsp;&nbsp;·&nbsp;&nbsp;3&nbsp;&nbsp;·&nbsp;&nbsp;6&nbsp;&nbsp;·&nbsp;&nbsp;E</div>
+  <div id="compass-marker">▼ <span id="hud-heading">000</span>°</div>
+</div>
+
+<!-- Attitude indicator (artificial horizon), drawn by hud.js -->
+<div id="attitude-box" class="hud-panel">
+  <canvas id="attitude-canvas" width="132" height="132"></canvas>
+  <div class="hud-label">Attitude</div>
+</div>
+
+<!-- Engine instruments: throttle and fuel -->
+<div id="engine-box" class="hud-panel">
+  <div class="bar-row">
+    <div class="hud-label"><span>Throttle</span><span id="hud-throttle-pct">0%</span></div>
+    <div class="bar-track"><div id="throttle-fill" class="bar-fill"></div></div>
+  </div>
+  <div class="bar-row">
+    <div class="hud-label"><span>Fuel</span><span id="hud-fuel-pct">100%</span></div>
+    <div class="bar-track"><div id="fuel-fill" class="bar-fill"></div></div>
+  </div>
+</div>
+
+<!-- Objective diamond that tracks the next ring or the runway -->
+<div id="objective-marker"><div class="diamond"></div><div class="dist" id="objective-dist"></div></div>
+
+<div id="message-centre"><span id="message-main"></span><div id="message-sub"></div></div>
+<div id="warning-line"></div>
+
+<!-- Title screen -->
+<div id="title-overlay" class="overlay">
+  <div class="overlay-card">
+    <h1 class="game-title">SKYBOUND</h1>
+    <div class="game-subtitle">Ring Circuit</div>
+    <p>Take off from the valley runway, thread all <b>8 sky rings</b> in order,
+       then bring her home and land. Smooth flying pays: rings are worth 250,
+       a greased landing 500 — and the clock is always ticking.</p>
+    <div class="controls-grid">
+      <span><b>W / S</b></span><span>throttle up / down</span>
+      <span><b>↑ ↓ ← →</b> or <b>mouse</b></span><span>pitch and roll (hold mouse to steer)</span>
+      <span><b>A / D</b></span><span>rudder</span>
+      <span><b>C</b></span><span>cockpit / chase camera</span>
+      <span><b>P</b></span><span>pause</span>
+      <span><b>M</b></span><span>mute</span>
+      <span><b>R</b></span><span>restart</span>
+    </div>
+    <button id="fly-button" class="fly-button">TAKE OFF</button>
+    <p>Watch your fuel, respect the stall, and flare before you touch.</p>
+  </div>
+</div>
+
+<!-- Crash screen -->
+<div id="crash-overlay" class="overlay hidden">
+  <div class="overlay-card">
+    <h1 class="game-title" style="color:#ff8a6a">DOWN</h1>
+    <div class="game-subtitle" id="crash-reason">Terrain strike</div>
+    <p id="crash-detail">The valley keeps another one.</p>
+    <button id="crash-retry-button" class="fly-button">FLY AGAIN</button>
+  </div>
+</div>
+
+<!-- Mission complete screen -->
+<div id="complete-overlay" class="overlay hidden">
+  <div class="overlay-card">
+    <h1 class="game-title" style="color:#9fe870">HOME</h1>
+    <div class="game-subtitle">Mission complete</div>
+    <table class="score-table">
+      <tr><td>Rings (8 × 250)</td><td id="final-rings">0</td></tr>
+      <tr><td>Landing</td><td id="final-landing">0</td></tr>
+      <tr><td>Time bonus</td><td id="final-time">0</td></tr>
+      <tr class="total"><td>Final score</td><td id="final-score">0</td></tr>
+    </table>
+    <button id="complete-retry-button" class="fly-button">FLY AGAIN</button>
+  </div>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
